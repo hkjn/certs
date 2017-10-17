@@ -15,9 +15,8 @@ if [[ ! "${NO_PUSH}" ]]; then
   docker push ${TAG}
 fi
 
-if ! which manifest-tool 1>/dev/null; then
-        echo "FATAL: No manifest-tool found on PATH, can't push multi-arch manifests." >&2
-        exit 1
-fi
 echo "Pushing multi-arch manifests.."
-manifest-tool push from-args --platforms linux/amd64,linux/arm --template hkjn/certs:ARCH --target hkjn/certs
+docker run -v $HOME/.docker:/home/go/.docker:ro --rm hkjn/manifest-tool \
+       push from-args --platforms linux/amd64,linux/arm \
+                      --template ${DOCKER_USER}/${DOCKER_IMAGE}:ARCH \
+                      --target ${DOCKER_USER}/${DOCKER_IMAGE}
