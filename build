@@ -23,7 +23,7 @@ if [[ ! "${NO_PUSH}" ]]; then
 	                      --target ${DOCKER_USER}/${DOCKER_IMAGE}
 fi
 
-if [[ ! "{NO_INSTALL_BINS}" ]]; then
+if [[ ! "${NO_INSTALL_BINS}" ]]; then
 	echo "Copying binaries to bin/.."
 	mkdir -p bin
 	docker run --rm -v $(pwd)/bin:/build \
