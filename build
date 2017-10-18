@@ -4,6 +4,7 @@ declare DOCKER_USER="hkjn"
 declare DOCKER_IMAGE="certs"
 declare CPU_ARCH="$(uname -m)"
 declare NO_PUSH=${NO_PUSH:-""}
+declare NO_INSTALL_BINS=${NO_INSTALL_BINS:-""}
 declare -A DOCKER_ARCHS
 DOCKER_ARCHS["x86_64"]="amd64"
 DOCKER_ARCHS["armv7l"]="arm"
@@ -22,9 +23,14 @@ if [[ ! "${NO_PUSH}" ]]; then
 	                      --target ${DOCKER_USER}/${DOCKER_IMAGE}
 fi
 
-echo "Copying binaries to bin/.."
-mkdir -p bin
-docker run --rm -v $(pwd):/build \
-           --entrypoint sh \
-  hkjn/certs:${DOCKER_ARCH} \
-    -c 'mv -v bin/* /build/'
+if [[ ! "{NO_INSTALL_BINS}" ]]; then
+	echo "Copying binaries to bin/.."
+	mkdir -p bin
+	docker run --rm -v $(pwd)/bin:/build \
+	           --entrypoint sh \
+	  hkjn/certs:${DOCKER_ARCH} \
+	    -c 'mv -v bin/* /build/'
+
+	echo "Installing binaries to /usr/local/bin/..."
+	sudo install bin/* /usr/local/bin/
+fi
