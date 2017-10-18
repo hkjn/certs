@@ -1,8 +1,15 @@
-FROM hkjn/golang:1.8.3
+FROM hkjn/golang
+
+ARG goarch
 
 USER root
 RUN apk add --no-cache gcc
 USER go
-RUN go get github.com/cloudflare/cfssl/cmd/cfssl
+
+ENV CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=${goarch}
+
+RUN go get -v github.com/cloudflare/cfssl/cmd/...
 
 ENTRYPOINT ["cfssl"]
